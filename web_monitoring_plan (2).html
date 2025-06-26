@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plano Operacional - Monitoramento Web</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            font-weight: 500;
+        }
+
+        .tab-button:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .tab-button.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .component-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .component-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .component-card h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .approach-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .approach-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .approach-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .pros, .cons {
+            padding: 1rem;
+            border-radius: 10px;
+        }
+
+        .pros {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border-left: 4px solid #28a745;
+        }
+
+        .cons {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            border-left: 4px solid #dc3545;
+        }
+
+        .cost-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .cost-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .cost-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cost-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .cost-table tr:hover {
+            background: #e3f2fd;
+        }
+
+        .flowchart {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .flow-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .flow-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .flow-box {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+            min-width: 150px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .flow-box:hover {
+            transform: scale(1.05);
+        }
+
+        .flow-box.webapp {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+        }
+
+        .flow-box.database {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+        }
+
+        .flow-box.scraper {
+            background: linear-gradient(135deg, #9C27B0, #7B1FA2);
+        }
+
+        .flow-arrow {
+            font-size: 2rem;
+            color: #667eea;
+            animation: pulse 2s infinite;
+        }
+
+        .comparison-overview {
+            margin-bottom: 2rem;
+        }
+
+        .overview-card {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            padding: 2rem;
+            border-radius: 15px;
+            border-left: 5px solid #2196f3;
+            text-align: center;
+        }
+
+        .performance-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .performance-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            border-top: 5px solid #667eea;
+        }
+
+        .performance-card.simplified {
+            border-top-color: #ff9800;
+        }
+
+        .performance-card.robust {
+            border-top-color: #4caf50;
+        }
+
+        .performance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .performance-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+            background: #667eea;
+        }
+
+        .simplified .performance-badge {
+            background: #ff9800;
+        }
+
+        .robust .performance-badge {
+            background: #4caf50;
+        }
+
+        .performance-metrics {
+            display: grid;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .metric-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .metric-value {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .performance-details {
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+
+        .captcha-analysis {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .captcha-intro {
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+            padding: 2rem;
+            border-radius: 15px;
+            border-left: 5px solid #ff9800;
+            text-align: center;
+        }
+
+        .captcha-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+        }
+
+        .captcha-option {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border-top: 4px solid #4caf50;
+        }
+
+        .option-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .option-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .option-badge.recommended {
+            background: #4caf50;
+        }
+
+        .option-badge.alternative {
+            background: #2196f3;
+        }
+
+        .option-details ul {
+            margin-top: 1rem;
+            padding-left: 1rem;
+        }
+
+        .option-details li {
+            margin-bottom: 0.5rem;
+        }
+
+        .captcha-benefits {
+            background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+            padding: 2rem;
+            border-radius: 15px;
+            border-left: 5px solid #4caf50;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .benefit-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .benefit-text {
+            flex: 1;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 1.5rem;
+            }
+            
+            .pros-cons {
+                grid-template-columns: 1fr;
+            }
+            
+            .approach-comparison, .performance-comparison, .captcha-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .flow-row {
+                flex-direction: column;
+            }
+            
+            .cost-table {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Plano Operacional</h1>
+            <p>Projeto de Monitoramento Web (Data Mining) - Planejamento completo da aplicação web até a infraestrutura de scrapers</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="tab-button active" onclick="showTab('components')">📦 Componentes</button>
+            <button class="tab-button" onclick="showTab('approaches')">⚖️ Abordagens</button>
+            <button class="tab-button" onclick="showTab('costs')">💰 Custos</button>
+            <button class="tab-button" onclick="showTab('flowchart')">📊 Fluxograma</button>
+            <button class="tab-button" onclick="showTab('comparison')">🔍 Análise Comparativa</button>
+        </div>
+
+        <!-- Componentes Principais -->
+        <div id="components" class="content-section active">
+            <div class="card">
+                <h2>📦 Componentes Principais</h2>
+                <div class="component-grid">
+                    <div class="component-card">
+                        <h3>🌐 Site da Aplicação</h3>
+                        <p><strong>Frontend:</strong> Interface em Vue.js para cadastro e configuração de páginas e frequências.</p>
+                        <p><strong>Backend:</strong> API em FastAPI para gerenciar cadastros, horários e orquestração de tarefas.</p>
+                    </div>
+                    
+                    <div class="component-card">
+                        <h3>🗄️ Banco de Dados Externo</h3>
+                        <p>Armazenamento centralizado de:</p>
+                        <ul>
+                            <li>Páginas monitoradas</li>
+                            <li>Intervalos de verificação</li>
+                            <li>Históricos e diffs</li>
+                        </ul>
+                        <p>Acessível pela aplicação web e pelos scrapers.</p>
+                    </div>
+                    
+                    <div class="component-card">
+                        <h3>🤖 Data Mining (Scraper VM)</h3>
+                        <p>Instância dedicada executando código de scraping com Selenium:</p>
+                        <ul>
+                            <li>Quebra de CAPTCHA via serviço ou solução própria</li>
+                            <li>Comunicação backend-to-backend</li>
+                            <li>Alto custo computacional em execuções paralelas</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Abordagens -->
+        <div id="approaches" class="content-section">
+            <div class="card">
+                <h2>⚖️ Comparação de Abordagens</h2>
+                <div class="approach-comparison">
+                    <div class="approach-card">
+                        <h3>🚀 Versão Simplificada</h3>
+                        <p>Tudo concentrado em uma única VM com agendador simples (cron ou APScheduler) e pool de threads/processos.</p>
+                        
+                        <div class="pros-cons">
+                            <div class="pros">
+                                <h4>✅ Prós</h4>
+                                <ul>
+                                    <li>Rápida implementação</li>
+                                    <li>Custo reduzido</li>
+                                    <li>Complexidade menor</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="cons">
+                                <h4>❌ Contras</h4>
+                                <ul>
+                                    <li>Escalabilidade limitada (~1.500 páginas)</li>
+                                    <li>Falta de isolamento</li>
+                                    <li>Dificuldade de paralelismo</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="approach-card">
+                        <h3>🏗️ Versão Robusta e Escalável</h3>
+                        <p>Várias VMs em paralelo com fila de tarefas (Redis + Celery) e containers Docker isolando serviços.</p>
+                        
+                        <div class="pros-cons">
+                            <div class="pros">
+                                <h4>✅ Prós</h4>
+                                <ul>
+                                    <li>Alta escalabilidade (milhares de páginas)</li>
+                                    <li>Melhor isolamento e tolerância a falhas</li>
+                                    <li>Fácil manutenção e expansão</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="cons">
+                                <h4>❌ Contras</h4>
+                                <ul>
+                                    <li>Curva de aprendizado maior</li>
+                                    <li>Custo inicial superior</li>
+                                    <li>Implementação mais demorada</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custos -->
+        <div id="costs" class="content-section">
+            <div class="card">
+                <h2>💰 Estimativa de Custos Mensais (USD)</h2>
+                <table class="cost-table">
+                    <thead>
+                        <tr>
+                            <th>Despesa</th>
+                            <th>Simplificado</th>
+                            <th>Robusto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>VM</td>
+                            <td>$4,46 ~ R$25</td>
+                            <td>$7,16 ~ R$40</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Banco de Dados Gerenciado</td>
+                            <td>$15 ~ R$82,69</td>
+                            <td>$23 ~ R$126,79</td>
+                        </tr>
+                        <tr>
+                            <td>Serviço de CAPTCHA (terceirizado)</td>
+                            <td>€1620 ~ R$ 10481,4 (30min)</td>
+                            <td>€9720 ~ R$ 62888,4 (5min)</td>
+                        </tr>
+                        <tr style="background: #e8f5e8;">
+                            <td>Solução CAPTCHA Própria</td>
+                            <td style="color: #4caf50; font-weight: bold;">$0</td>
+                            <td style="color: #4caf50; font-weight: bold;">$0</td>
+                        </tr>
+                        <tr style="font-weight: bold; background: #e3f2fd;">
+                            <td>Total com CAPTCHA Terceirizado</td>
+                            <td>R$10.588,69</td>
+                            <td>R$63.055,19</td>
+                        </tr>
+                        <tr style="font-weight: bold; background: #e8f5e8;">
+                            <td>Total com CAPTCHA Próprio</td>
+                            <td style="color: #4caf50;">R$48</td>
+                            <td style="color: #4caf50;">R$166,79</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Fluxograma -->
+        <div id="flowchart" class="content-section">
+            <div class="card">
+                <h2>📊 Fluxograma de Relações dos Componentes</h2>
+                <div class="flowchart">
+                    <div class="flow-container">
+                        <div class="flow-row">
+                            <div class="flow-box webapp">
+                                <strong>Frontend</strong><br>
+                                (Vue.js)
+                            </div>
+                            <div class="flow-arrow">↔️</div>
+                            <div class="flow-box webapp">
+                                <strong>Backend</strong><br>
+                                (FastAPI)
+                            </div>
+                        </div>
+                        
+                        <div class="flow-arrow">⬇️</div>
+                        
+                        <div class="flow-row">
+                            <div class="flow-box database">
+                                <strong>Banco de Dados</strong><br>
+                                (Páginas, Históricos, Diffs)
+                            </div>
+                        </div>
+                        
+                        <div class="flow-arrow">⬇️ ⬆️</div>
+                        
+                        <div class="flow-row">
+                            <div class="flow-box scraper">
+                                <strong>Scraper VM</strong><br>
+                                (Selenium)
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-box">
+                                <strong>CAPTCHA Solver</strong>
+                            </div>
+                        </div>
+                        
+                        <div class="flow-arrow">⬇️</div>
+                        
+                        <div class="flow-row">
+                            <div class="flow-box">
+                                <strong>Sites Externos</strong><br>
+                                (Monitoramento)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Análise Comparativa -->
+        <div id="comparison" class="content-section">
+            <div class="card">
+                <h2>🔍 Análise Comparativa de Performance</h2>
+                
+                <div class="comparison-overview">
+                    <div class="overview-card">
+                        <h3>⚡ Principal Diferencial: Capacidade de Verificação</h3>
+                        <p>Além da estabilidade, a diferença fundamental entre as abordagens está na <strong>frequência e quantidade de verificações simultâneas</strong> que cada arquitetura consegue suportar eficientemente.</p>
+                    </div>
+                </div>
+
+                <div class="performance-comparison">
+                    <div class="performance-card simplified">
+                        <div class="performance-header">
+                            <h3>🚀 Versão Simplificada</h3>
+                            <div class="performance-badge">Limitada</div>
+                        </div>
+                        
+                        <div class="performance-metrics">
+                            <div class="metric">
+                                <span class="metric-label">Capacidade:</span>
+                                <span class="metric-value">~1.500 processos</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Intervalo mínimo:</span>
+                                <span class="metric-value">30-60 minutos</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Verificações de 5min:</span>
+                                <span class="metric-value">❌ Impossível</span>
+                            </div>
+                        </div>
+                        
+                        <div class="performance-details">
+                            <p><strong>Limitação:</strong> Para 1.500 processos, o tempo mínimo de verificação seria entre 30-60 minutos por processo.</p>
+                            <p><strong>Flexibilidade:</strong> Possível implementar sistema de <em>prioridades</em>, onde processos críticos são verificados com maior frequência.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="performance-card robust">
+                        <div class="performance-header">
+                            <h3>🏗️ Versão Robusta</h3>
+                            <div class="performance-badge">Escalável</div>
+                        </div>
+                        
+                        <div class="performance-metrics">
+                            <div class="metric">
+                                <span class="metric-label">Capacidade:</span>
+                                <span class="metric-value">Milhares de processos</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Intervalo mínimo:</span>
+                                <span class="metric-value">5 minutos</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Verificações de 5min:</span>
+                                <span class="metric-value">✅ Múltiplas VMs</span>
+                            </div>
+                        </div>
+                        
+                        <div class="performance-details">
+                            <p><strong>Escalabilidade Total:</strong> Verificações a cada 5 minutos são possíveis <strong>somente com múltiplas máquinas virtuais</strong>.</p>
+                            <p><strong>Alternativa Econômica:</strong> Com verificações de 30 minutos (e algumas prioritárias mais frequentes), seria possível operar com apenas uma máquina virtual.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🔓 Otimização de CAPTCHA - Redução de Custos</h2>
+                
+                <div class="captcha-analysis">
+                    <div class="captcha-intro">
+                        <h3>💡 Oportunidade de Economia</h3>
+                        <p>O sistema de CAPTCHA do cadastro mineiro é <strong>relativamente simples</strong> - apenas leitura de imagem sem verificações adicionais complexas. Isso abre possibilidades para soluções próprias mais econômicas.</p>
+                    </div>
+                    
+                    <div class="captcha-options">
+                        <div class="captcha-option">
+                            <div class="option-header">
+                                <h4>🔧 Opção 1: Solução Adaptada</h4>
+                                <span class="option-badge recommended">Recomendada</span>
+                            </div>
+                            <div class="option-details">
+                                <p><strong>Estratégia:</strong> Adaptar uma solução existente de reconhecimento de imagem (pacotes Python)</p>
+                                <ul>
+                                    <li>✅ Implementação mais rápida e direta</li>
+                                    <li>✅ Custo zero após implementação</li>
+                                    <li>✅ Sem riscos de segurança</li>
+                                    <li>✅ Fácil manutenção</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="captcha-option">
+                            <div class="option-header">
+                                <h4>🤖 Opção 2: Modelo Próprio</h4>
+                                <span class="option-badge alternative">Plano B</span>
+                            </div>
+                            <div class="option-details">
+                                <p><strong>Estratégia:</strong> Criar e treinar modelo customizado de reconhecimento</p>
+                                <ul>
+                                    <li>⏰ Maior tempo de desenvolvimento</li>
+                                    <li>✅ Custo zero após treinamento</li>
+                                    <li>✅ Controle total sobre o modelo</li>
+                                    <li>🔄 Necessário apenas se Opção 1 falhar</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="captcha-benefits">
+                        <h3>🎯 Benefícios da Implementação Própria</h3>
+                        <div class="benefits-grid">
+                            <div class="benefit-item">
+                                <div class="benefit-icon">💰</div>
+                                <div class="benefit-text">
+                                    <strong>Custo Zero</strong><br>
+                                    Eliminação total dos custos com serviços de CAPTCHA
+                                </div>
+                            </div>
+                            <div class="benefit-item">
+                                <div class="benefit-icon">📈</div>
+                                <div class="benefit-text">
+                                    <strong>Escalabilidade</strong><br>
+                                    Facilidade para escalar sem custos adicionais
+                                </div>
+                            </div>
+                            <div class="benefit-item">
+                                <div class="benefit-icon">🔒</div>
+                                <div class="benefit-text">
+                                    <strong>Controle Total</strong><br>
+                                    Independência de serviços externos
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all content sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        // Add some interactive animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animation = 'fadeIn 0.8s ease-out';
+                    }
+                });
+            });
+            
+            cards.forEach(card => {
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>
